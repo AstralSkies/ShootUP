@@ -159,79 +159,41 @@ function handleKeydown(event) {
             break;
     }
 }
-function handleTouch(event) {
-    const touch = event.changedTouches[0];
-    const x = touch.clientX;
-    const y = touch.clientY;
+let touchStartX = null;
+let touchStartY = null;
 
-    // Convert touch coordinates to game coordinates
-    const offsetX = canvas.offsetLeft;
-    const offsetY = canvas.offsetTop;
-    const gameX = x - offsetX;
-    const gameY = y - offsetY;
+function handleTouchStart(event) {
+    touchStartX = event.touches[0].pageX;
+    touchStartY = event.touches[0].pageY;
+}
 
-    // Calculate which tile the touch is in
-    const tileX = Math.floor((gameX / canvas.width) * 10);
-    const tileY = Math.floor((gameY / canvas.height) * 10);
+function handleTouchEnd(event) {
+    const touchEndX = event.changedTouches[0].pageX;
+    const touchEndY = event.changedTouches[0].pageY;
 
-    // Move the player in the direction of the touch
-    if (tileX < player.x) {
-        player.x--;
-        lastFacingDirection = 'left';
-    } else if (tileX > player.x) {
-        player.x++;
-        lastFacingDirection = 'right';
-    } else if (tileY < player.y) {
-        player.y--;
-        lastFacingDirection = 'up';
-    } else if (tileY > player.y) {
-        player.y++;
-        lastFacingDirection = 'down';
-    }
+    const touchDiffX = touchEndX - touchStartX;
+    const touchDiffY = touchEndY - touchStartY;
 
-    // Handle collisions
-    if (isColliding(player.x, player.y)) {
-        switch (lastFacingDirection) {
-            case 'up':
-                player.y++;
-                break;
-            case 'down':
-                player.y--;
-                break;
-            case 'left':
-                player.x++;
-                break;
-            case 'right':
-                player.x--;
-                break;
+    if (Math.abs(touchDiffX) > Math.abs(touchDiffY)) {
+        if (touchDiffX > 0) {
+            // Swipe right
+            player.x++;
+            lastFacingDirection = 'right';
+        } else {
+            // Swipe left
+            player.x--;
+            lastFacingDirection = 'left';
         }
-    }
-
-    // Rotate the player sprite
-    switch (lastFacingDirection) {
-        case 'up':
-            player.color = 'red';
-            break;
-        case 'down':
-            player.color = 'blue';
-            break;
-        case 'left':
-            player.color = 'yellow';
-            break;
-        case 'right':
-            player.color = 'white';
-            break;
-    }
-
-    // Handle shooting touch
-    if (lasers.length === 0) {
-        const laser = {
-            x: player.x,
-            y: player.y,
-            color: 'red',
-            direction: lastFacingDirection
-        };
-        lasers.push(laser);
+    } else {
+        if (touchDiffY > 0) {
+            // Swipe down
+            player.y++;
+            lastFacingDirection = 'down';
+        } else {
+            // Swipe up
+            player.y--;
+            lastFacingDirection = 'up';
+        }
     }
 }
 
@@ -383,7 +345,9 @@ function gameLoop() {
     drawFacingDirection();
 }
 
-
+// Handle touch events
+canvas.addEventListener('touchstart', handleTouchStart);
+canvas.addEventListener('touchend', handleTouchEnd);
 canvas.addEventListener('keydown', handleKeydown);
 canvas.addEventListener('keydown', event => {
     if (event.key === ' ') {
