@@ -190,6 +190,26 @@ function shootLasers() {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+// Draw grid lines for the map area
+ctx.strokeStyle = 'rgba(128, 128, 128, 0.5)';
+ctx.lineWidth = 1;
+
+for (let i = 0; i <= 10; i++) {
+    for (let j = 0; j <= 10; j++) {
+        const topLeft = isoTo2D(i * tileSize, j * tileSize);
+        const topRight = isoTo2D((i + 1) * tileSize, j * tileSize);
+        const bottomLeft = isoTo2D(i * tileSize, (j + 1) * tileSize);
+        const bottomRight = isoTo2D((i + 1) * tileSize, (j + 1) * tileSize);
+
+        ctx.beginPath();
+        ctx.moveTo(topLeft.x, topLeft.y);
+        ctx.lineTo(topRight.x, topRight.y);
+        ctx.lineTo(bottomRight.x, bottomRight.y);
+        ctx.lineTo(bottomLeft.x, bottomLeft.y);
+        ctx.closePath();
+        ctx.stroke();
+    }
+}
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 10; j++) {
               drawTile(i, j, 'black');
