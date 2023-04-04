@@ -24,9 +24,10 @@
           height: 600px;
         }
       }
+      
       canvas {
         position: relative;
-        background-color: black;
+        background-color: white;
         max-width: 100%;
         height: auto;
         display: block;
@@ -51,11 +52,19 @@
     <script>
       const canvas = document.getElementById("gameCanvas");
       const ctx = canvas.getContext("2d");
+      
+const screenWidth = window.innerWidth;
+const screenHeight = window.innerHeight;
+const canvasWidth = canvas.width;
+const canvasHeight = canvas.height;
+canvas.style.marginLeft = "auto";
+canvas.style.marginRight = "auto";
+canvas.style.marginTop = (screenHeight - canvasHeight) / 2 + "px";
 
       canvas.focus(); // Focus the canvas to enable keyboard input
 
       const tileSize = 32;
-      const playerColor = "white";
+      const playerColor = "purple";
       let enemyColor = "green";
 
       const player = {
@@ -217,7 +226,7 @@
             player.color = "yellow";
             break;
           case "right":
-            player.color = "white";
+            player.color = "purple";
             break;
         }
       }
@@ -288,18 +297,18 @@
           case "down":
             player.color = "blue";
             break;
-          case "left":
-            player.color = "yellow";
-            break;
+            case "left":
+  player.color = "pink";
+  break;
           case "right":
-            player.color = "white";
+            player.color = "pink";
             break;
         }
       }
 
       // Draw text on the canvas if enemies are killed
       let killedEnemies = 0;
-      function drawText(text, x, y, color = "white") {
+      function drawText(text, x, y, color = "black") {
         ctx.fillStyle = color;
         ctx.font = "30px Arial";
         ctx.fillText(text, x, y);
@@ -366,7 +375,7 @@
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Draw grid lines for the map area
-  ctx.strokeStyle = "rgba(128, 128, 128, 0.7)";
+  ctx.strokeStyle = "black";
   ctx.lineWidth = 1;
 
   for (let i = 0; i <= 10; i++) {
@@ -387,7 +396,7 @@
   }
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
-      drawTile(i, j, "black");
+      //drawTile(i, j, "grey");
     }
   }
 
