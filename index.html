@@ -69,6 +69,22 @@ function drawTile(x, y, color, size = tileSize) {
     ctx.fill();
 }
 
+// Collision detection
+function isColliding(x, y) {
+    if (x < 0 || x > 10 || y < 0 || y > 10) {
+        return true;
+    }
+
+    for (let i = 0; i < enemies.length; i++) {
+        const enemy = enemies[i];
+        if (enemy.x === x && enemy.y === y) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 let lastFacingDirection = 'right';
 
 function handleKeydown(event) {
@@ -89,6 +105,23 @@ function handleKeydown(event) {
             player.x++;
             lastFacingDirection = 'right';
             break;
+    }
+
+    if (isColliding(player.x, player.y)) {
+        switch (lastFacingDirection) {
+            case 'up':
+                player.y++;
+                break;
+            case 'down':
+                player.y--;
+                break;
+            case 'left':
+                player.x++;
+                break;
+            case 'right':
+                player.x--;
+                break;
+        }
     }
 }
 
