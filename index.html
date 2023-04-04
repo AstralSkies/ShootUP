@@ -163,17 +163,19 @@ let touchStartX = null;
 let touchStartY = null;
 
 function handleTouchStart(event) {
-    touchStartX = event.touches[0].pageX;
-    touchStartY = event.touches[0].pageY;
+    event.preventDefault();
+    touchStartX = event.touches[0].clientX;
+    touchStartY = event.touches[0].clientY;
 }
 
-function handleTouchEnd(event) {
-    const touchEndX = event.changedTouches[0].pageX;
-    const touchEndY = event.changedTouches[0].pageY;
-
-    const touchDiffX = touchEndX - touchStartX;
-    const touchDiffY = touchEndY - touchStartY;
-
+function handleTouchMove(event) {
+    event.preventDefault();
+    const touchMoveX = event.touches[0].clientX;
+    const touchMoveY = event.touches[0].clientY;
+    
+    const touchDiffX = touchMoveX - touchStartX;
+    const touchDiffY = touchMoveY - touchStartY;
+    
     if (Math.abs(touchDiffX) > Math.abs(touchDiffY)) {
         if (touchDiffX > 0) {
             // Swipe right
@@ -195,13 +197,8 @@ function handleTouchEnd(event) {
             lastFacingDirection = 'up';
         }
     }
-}
-
-// Draw on the upper left corner of the canvas which direction the player is facing
-function drawFacingDirection() {
-    ctx.fillStyle = 'white';
-    ctx.font = '30px Arial';
-    ctx.fillText(`Facing: ${lastFacingDirection}`, 10, 30);
+    touchStartX = touchMoveX;
+    touchStartY = touchMoveY;
 }
 
 
@@ -346,8 +343,8 @@ function gameLoop() {
 }
 
 // Handle touch events
-canvas.addEventListener('touchstart', handleTouchStart);
-canvas.addEventListener('touchend', handleTouchEnd);
+canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
 canvas.addEventListener('keydown', handleKeydown);
 canvas.addEventListener('keydown', event => {
     if (event.key === ' ') {
