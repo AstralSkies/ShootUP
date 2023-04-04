@@ -199,6 +199,40 @@ function handleTouchMove(event) {
     }
     touchStartX = touchMoveX;
     touchStartY = touchMoveY;
+
+    // Collision detection
+    if (isColliding(player.x, player.y)) {
+        switch (lastFacingDirection) {
+            case 'up':
+                player.y++;
+                break;
+            case 'down':
+                player.y--;
+                break;
+            case 'left':
+                player.x++;
+                break;
+            case 'right':
+                player.x--;
+                break;
+        }
+    }
+
+    // Direction detection
+    switch (lastFacingDirection) {
+        case 'up':
+            player.color = 'red';
+            break;
+        case 'down':
+            player.color = 'blue';
+            break;
+        case 'left':
+            player.color = 'yellow';
+            break;
+        case 'right':
+            player.color = 'white';
+            break;
+    }
 }
 
 
