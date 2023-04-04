@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Isometric Game</title>
-    <style>
-        canvas {
-            background-color: black;
-        }
-    </style>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Isometric Game</title>
+        <style>
+            canvas {
+                background-color: black;
+                max-width: 100%;
+                height: auto;
+                display: block;
+            }
+            @media only screen and (min-width: 600px) {
+                canvas {
+                    width: 600px;
+                    height: 450px;
+                }
+            }
+            @media only screen and (min-width: 800px) {
+                canvas {
+                    width: 800px;
+                    height: 600px;
+                }
+            }
+        </style>
+    </head>
 <body>
     <canvas id="gameCanvas" width="800" height="600" tabindex="1"></canvas>
     <script>
@@ -52,6 +67,9 @@ function isoTo2D(x, y) {
         x: (x - y) + offsetX,
         y: (x + y) / 2 + offsetY
     };
+
+  
+    
 }
 
 
@@ -66,6 +84,7 @@ function drawTile(x, y, color, size = tileSize) {
     ctx.closePath();
 
     ctx.fillStyle = color;
+    // en
     ctx.fill();
 }
 
@@ -107,6 +126,70 @@ function handleKeydown(event) {
             break;
     }
 
+    if (isColliding(player.x, player.y)) {
+        switch (lastFacingDirection) {
+            case 'up':
+                player.y++;
+                break;
+            case 'down':
+                player.y--;
+                break;
+            case 'left':
+                player.x++;
+                break;
+            case 'right':
+                player.x--;
+                break;
+        }
+    }
+
+    // Rotate the player sprite
+    switch (lastFacingDirection) {
+        case 'up':
+            player.color = 'red';
+            break;
+        case 'down':
+            player.color = 'blue';
+            break;
+        case 'left':
+            player.color = 'yellow';
+            break;
+        case 'right':
+            player.color = 'white';
+            break;
+    }
+}
+function handleTouch(event) {
+    const touch = event.changedTouches[0];
+    const x = touch.clientX;
+    const y = touch.clientY;
+
+    // Convert touch coordinates to game coordinates
+    const offsetX = canvas.offsetLeft;
+    const offsetY = canvas.offsetTop;
+    const gameX = x - offsetX;
+    const gameY = y - offsetY;
+
+    // Calculate which tile the touch is in
+    const tileX = Math.floor((gameX / canvas.width) * 10);
+    const tileY = Math.floor((gameY / canvas.height) * 10);
+
+    // Move the player in the direction of the touch
+    if (tileX < player.x) {
+        player.x--;
+        lastFacingDirection = 'left';
+    } else if (tileX > player.x) {
+        player.x++;
+        lastFacingDirection = 'right';
+    } else if (tileY < player.y) {
+        player.y--;
+        lastFacingDirection = 'up';
+    } else if (tileY > player.y) {
+        player.y++;
+        lastFacingDirection = 'down';
+    }
+
+    // Handle collisions
     if (isColliding(player.x, player.y)) {
         switch (lastFacingDirection) {
             case 'up':
@@ -185,6 +268,8 @@ function shootLasers() {
 
         drawTile(laser.x, laser.y, laser.color);
 
+        
+
         for (let i = 0; i < enemies.length; i++) {
             const enemy = enemies[i];
             if (laser.x === enemy.x && laser.y === enemy.y) {
@@ -215,7 +300,7 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 // Draw grid lines for the map area
-ctx.strokeStyle = 'rgba(128, 128, 128, 0.5)';
+ctx.strokeStyle = 'rgba(128, 128, 128, 0.7)';
 ctx.lineWidth = 1;
 
 for (let i = 0; i <= 10; i++) {
@@ -249,10 +334,10 @@ for (let i = 0; i <= 10; i++) {
         const laser = lasers[i];
         drawTile(laser.x, laser.y, laser.color);
     }
-    // Rotate the player sprite based on the last facing direction
-    
+    // Rotate the player sprite based on the direction the player is facing
+    drawTile(player.x, player.y, player.color, player.rotation);
 
-    drawTile(player.x, player.y, player.color);
+    
 }
 let lightingValue = 0;
 let lightingDirection = 1; // 1 for increasing, -1 for decreasing
@@ -280,14 +365,15 @@ function applyLighting() {
 function gameLoop() {
     updateLighting(); // Update the lighting value
     draw();
-    applyLighting(); // Apply the lighting value to the canvas
+ //   applyLighting(); // Apply the lighting value to the canvas
     requestAnimationFrame(gameLoop);
     drawText(`Killed enemies: ${killedEnemies}`, 10, 60);
 
     drawFacingDirection();
 }
 
-
+canvas.addEventListener('touchstart', handleTouch);
+canvas.addEventListener('touchend', handleTouch);
 canvas.addEventListener('keydown', handleKeydown);
 canvas.addEventListener('keydown', event => {
     if (event.key === ' ') {
