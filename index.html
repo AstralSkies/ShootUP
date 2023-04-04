@@ -175,12 +175,35 @@ function draw() {
 
     drawTile(player.x, player.y, player.color);
 }
+let lightingValue = 0;
+let lightingDirection = 1; // 1 for increasing, -1 for decreasing
+
+function updateLighting() {
+    lightingValue += 0.01 * lightingDirection;
+
+    if (lightingValue >= 1) {
+        lightingDirection = -1;
+    } else if (lightingValue <= 0) {
+        lightingDirection = 1;
+    }
+}
+
+function applyLighting() {
+    ctx.save();
+    ctx.globalCompositeOperation = 'overlay';
+    ctx.fillStyle = `rgba(0, 0, 0, ${lightingValue})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+}
 
 function gameLoop() {
+    updateLighting(); // Update the lighting value
     draw();
+    applyLighting(); // Apply the lighting value to the canvas
     requestAnimationFrame(gameLoop);
     drawText(`Killed enemies: ${killedEnemies}`, 10, 50);
 }
+
 
 canvas.addEventListener('keydown', handleKeydown);
 canvas.addEventListener('keydown', event => {
