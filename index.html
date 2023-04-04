@@ -24,12 +24,31 @@
                     height: 600px;
                 }
             }
+            canvas {
+    position: relative;
+    background-color: black;
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: red;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    z-index: 1;
+}
         </style>
     </head>
 <body>
-    <div id="fireButton" style="position: fixed; bottom: 20px; right: 20px; background-color: red; width: 50px; height: 50px; border-radius: 50%; z-index: 1;"></div>
+    
 
     <canvas id="gameCanvas" width="800" height="600" tabindex="1"></canvas>
+    <div id="fireButton" class="button"></div>
     <script>
         const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -112,18 +131,22 @@ let lastFacingDirection = 'right';
 function handleKeydown(event) {
     switch (event.key) {
         case 'ArrowUp':
+            event.preventDefault();
             player.y--;
             lastFacingDirection = 'up';
             break;
         case 'ArrowDown':
+            event.preventDefault();
             player.y++;
             lastFacingDirection = 'down';
             break;
         case 'ArrowLeft':
+            event.preventDefault();
             player.x--;
             lastFacingDirection = 'left';
             break;
         case 'ArrowRight':
+            event.preventDefault();
             player.x++;
             lastFacingDirection = 'right';
             break;
@@ -390,9 +413,10 @@ canvas.addEventListener('keydown', event => {
 });
 const fireButton = document.getElementById('fireButton');
 fireButton.addEventListener('touchstart', (event) => {
-    event.preventDefault();
+    event.preventDefault(); // Prevent the button from stealing focus
     shootLasers();
-});
+});;
+
 
 gameLoop();
     </script>
