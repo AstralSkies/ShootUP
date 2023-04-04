@@ -355,7 +355,7 @@ canvas.style.marginTop = (screenHeight - canvasHeight) / 2 + "px";
         lasers.splice(lasers.indexOf(laser), 1);
         enemies.splice(i, 1);
         killedEnemies++;
-        drawText(`Killed enemies: ${killedEnemies}`, 10, 50);
+        drawText(`Killed enemies: ${killedEnemies}`, 10, 20);
         respawnEnemies();
         return;
       }
@@ -418,6 +418,8 @@ canvas.style.marginTop = (screenHeight - canvasHeight) / 2 + "px";
         draw();
         requestAnimationFrame(gameLoop);
         drawText(`Killed enemies: ${killedEnemies}`, 10, 60);
+        // Direction detection
+        drawText(`Last facing direction: ${lastFacingDirection}`, 10, 100);
       }
       // Handle touch events
       canvas.addEventListener("touchstart", handleTouchStart, {
